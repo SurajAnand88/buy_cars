@@ -1,10 +1,8 @@
 const express = require("express");
+const { filterCars } = require("../Controllers/filterController");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  const query = req.query;
-  console.log(query);
-});
+router.get("/", filterCars);
 
 module.exports = router;
