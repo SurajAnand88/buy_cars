@@ -16,7 +16,12 @@ const PostOrEditCar = () => {
       getCarById();
     }
   }, []);
-  return <div>PostOrEditCar</div>;
+  return (
+    <div>
+      <h1>{car.company}</h1>
+      <h1>{car.model}</h1>
+    </div>
+  );
 };
 
 export default PostOrEditCar;

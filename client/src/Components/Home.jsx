@@ -9,19 +9,21 @@ const Home = () => {
     async function getCars() {
       const { data } = await axios.get("http://localhost:4000/api/allcars");
       setCars([...data]);
+      console.log(cars);
     }
     getCars();
   }, []);
   return (
-    <Box>
+    <Box p={4}>
       <SimpleGrid
-        columns={{ base: 1, md: 2, lg: 3 }}
-        spacing={10}
+        columns={{ sm: 1, md: 2, lg: 3 }}
+        spacing={4}
+        px={{ base: 2, sm: 10, md: 2 }}
         maxW={"container.xl"}
         mx={"auto"}
       >
         {cars?.map((car) => {
-          return <CarBox {...car} key={car._id} />;
+          return <CarBox {...car} key={car._id} isOwner={false} />;
         })}
       </SimpleGrid>
     </Box>
