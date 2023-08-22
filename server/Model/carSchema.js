@@ -8,6 +8,7 @@ const carSchema = new mongoose.Schema({
   model: {
     type: String,
     required: true,
+    unique: true,
   },
   price: {
     type: Number,

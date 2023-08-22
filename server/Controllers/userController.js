@@ -18,6 +18,11 @@ const addCar = async (req, res) => {
     additionalInfo,
   } = req.body;
   try {
+    //finding car by model
+    const car = await Car.findOne({ model });
+    if (car) {
+      return res.status(400).json({ message: "Car already exists" });
+    }
     const newCar = await Car.create({
       company,
       model,
@@ -31,12 +36,12 @@ const addCar = async (req, res) => {
       image,
       additionalInfo,
     });
-    const user = req.user;
+    const user = await User.findById(req.user._id);
     //pushing newCar id to user inventory
     user.inventory.push(newCar._id);
     await user.save();
-
-    res.status(201).json({ newCar, user });
+    const { _id, name, email, inventory } = user;
+    res.status(201).json({ newCar, user: { _id, name, email, inventory } });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -91,11 +96,11 @@ const getCar = async (req, res) => {
 const deleteCar = async (req, res) => {
   try {
     const car = await Car.findByIdAndDelete(req.params.id);
-    const user = req.user;
+    const user = await User.findById(req.user._id);
     const index = user.inventory.indexOf(car._id);
     user.inventory.splice(index, 1);
     await user.save();
-    res.status(200).json(car);
+    res.status(200).json({ message: "Car deleted successfully" }, car);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -104,8 +109,9 @@ const deleteCar = async (req, res) => {
 //sending all car details from the id's of  users inventory
 const getAllCars = async (req, res) => {
   try {
-    //getting all cars by id from users inventory array
-    const cars = req.user.inventory.map(async (id) => await Car.findById(id));
+    //gettting all car details present in users inventory by id
+    const user = await User.findById(req.user._id);
+    const cars = await Car.find({ _id: { $in: user.inventory } });
     res.status(200).json(cars);
   } catch (error) {
     res.status(500).json({ message: error.message });
