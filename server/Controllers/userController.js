@@ -23,6 +23,7 @@ const addCar = async (req, res) => {
     if (car) {
       return res.status(400).json({ message: "Car already exists" });
     }
+    const user = await User.findById(req.user._id);
     const newCar = await Car.create({
       company,
       model,
@@ -34,9 +35,9 @@ const addCar = async (req, res) => {
       power,
       color,
       image,
+      owner: user._id,
       additionalInfo,
     });
-    const user = await User.findById(req.user._id);
     //pushing newCar id to user inventory
     user.inventory.push(newCar._id);
     await user.save();
@@ -107,11 +108,20 @@ const deleteCar = async (req, res) => {
 };
 
 //sending all car details from the id's of  users inventory
-const getAllCars = async (req, res) => {
+const allUserCars = async (req, res) => {
   try {
     //gettting all car details present in users inventory by id
     const user = await User.findById(req.user._id);
     const cars = await Car.find({ _id: { $in: user.inventory } });
+    res.status(200).json(cars);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const allCars = async (req, res) => {
+  try {
+    const cars = await Car.find();
     res.status(200).json(cars);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -123,5 +133,6 @@ module.exports = {
   editCar,
   getCar,
   deleteCar,
-  getAllCars,
+  allUserCars,
+  allCars,
 };

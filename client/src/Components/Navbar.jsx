@@ -20,6 +20,9 @@ const Navbar = () => {
         </Link>
         {!token ? (
           <Flex gap={4} align={"center"}>
+            <Link to={"/inventory"}>
+              <Button>Inventory</Button>
+            </Link>
             <Link to={"/login"}>
               <Button>Login</Button>
             </Link>

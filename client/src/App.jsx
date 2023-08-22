@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Home from "./Components/Home";
+import Inventory from "./Components/Inventory";
 import Login from "./Components/Login";
 import Navbar from "./Components/Navbar";
 import PostOrEditCar from "./Components/PostOrEditCar";
@@ -24,12 +25,20 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="car/:id" element={<SingleCar />} />
+        <Route path="/car/:id" element={<SingleCar />} />
         <Route
-          path="car/edit/:id"
+          path="/car/edit/:id"
           element={
             <PrivateRoute>
               <PostOrEditCar />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/inventory"
+          element={
+            <PrivateRoute>
+              <Inventory />
             </PrivateRoute>
           }
         />

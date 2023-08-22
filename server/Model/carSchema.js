@@ -38,6 +38,10 @@ const carSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  owner: {
+    type: String,
+    required: true,
+  },
   image: {
     type: String,
     required: true,
