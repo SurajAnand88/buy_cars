@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Home from "./Components/Home";
+import Login from "./Components/Login";
+import Navbar from "./Components/Navbar";
+import PostOrEditCar from "./Components/PostOrEditCar";
+import SignUp from "./Components/SignUp";
+import SingleCar from "./Components/SingleCar";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const token = localStorage.getItem("userToken") || null;
+
+  //creating a private route based on token
+  const PrivateRoute = ({ children }) => {
+    if (!token) {
+      return <Navigate to="/login" />;
+    }
+    return children;
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="car/:id" element={<SingleCar />} />
+        <Route
+          path="car/edit/:id"
+          element={
+            <PrivateRoute>
+              <PostOrEditCar />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/addcar"
+          element={
+            <PrivateRoute>
+              <PostOrEditCar />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

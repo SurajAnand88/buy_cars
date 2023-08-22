@@ -16,18 +16,16 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
     });
     const { _id, name, email, inventory } = newUser;
-    res
-      .status(201)
-      .json({
-        user: { _id, name, email, inventory },
-        message: "User register successfully",
-      });
+    res.status(201).json({
+      user: { _id, name, email, inventory },
+      message: "User register successfully",
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// const token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGU0NzhlNGY2ODMwNTA0NGQwMzBlNDMiLCJuYW1lIjoiU3VyYWoiLCJlbWFpbCI6ImFuYW5kQGdtYWlsLmNvbSIsImludmVudG9yeSI6W10sIl9fdiI6MCwiaWF0IjoxNjkyNjk1NzYxfQ.xk2o8e52-HNuS_cP9DMaqvwZ98hZmGy28X7ah_OhMYs
+("");
 
 //Logining user
 const loginUser = async (req, res) => {

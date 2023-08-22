@@ -3,8 +3,10 @@ const Car = require("../Model/carSchema");
 
 const filterCars = async (req, res) => {
   try {
-    const { price, color, fuelType } = req.query;
+    const { price, color, fuelType, company } = req.query;
     const cars = await Car.find({
+      //if there is a company query then filter by company
+      ...(company && { company }),
       //if there is a color query then filter by color
       ...(color && { color }),
       //if there is a fuelType query then filter by fuelType
