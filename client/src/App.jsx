@@ -50,6 +50,7 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="*" element={<PostOrEditCar />} />
       </Routes>
     </BrowserRouter>
   );

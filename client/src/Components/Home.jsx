@@ -9,7 +9,7 @@ const Home = () => {
     async function getCars() {
       const { data } = await axios.get("http://localhost:4000/api/allcars");
       setCars([...data]);
-      console.log(cars);
+      console.log(data);
     }
     getCars();
   }, []);
