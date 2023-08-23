@@ -1,20 +1,33 @@
 import { Box, SimpleGrid } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import CarBox from "./CarBox";
 
 const Inventory = () => {
   const [cars, setCars] = useState([]);
+  const token = localStorage.getItem("userToken") || null;
+  const deleteCar = useSelector((store) => store.delete);
 
   useEffect(() => {
     async function getUsersInventory() {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/users/allcars"
-      );
-      setCars([...data]);
+      try {
+        const { data } = await axios.get(
+          "http://localhost:4000/api/user/allcars",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(data);
+        setCars([...data]);
+      } catch (error) {
+        console.log(error);
+      }
     }
     getUsersInventory();
-  }, []);
+  }, [deleteCar]);
   return (
     <Box p={4}>
       <SimpleGrid

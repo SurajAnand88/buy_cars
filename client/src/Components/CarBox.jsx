@@ -1,5 +1,7 @@
-import { Box, Button, Heading, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Image, Text, useToast } from "@chakra-ui/react";
+import axios from "axios";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 const CarBox = ({
@@ -17,6 +19,34 @@ const CarBox = ({
   additionalInfo,
   isOwner,
 }) => {
+  const toast = useToast();
+  const dispatch = useDispatch();
+  async function handleDelete() {
+    try {
+      const token = localStorage.getItem("userToken");
+      const { data } = await axios.get(
+        `http://localhost:4000/api/user/deletecar/${_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast({
+        title: "Car Deleted Successfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      });
+      dispatch({
+        type: "DELETE",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <Box
       borderWidth="1px"
@@ -25,7 +55,7 @@ const CarBox = ({
       boxShadow="md"
       _hover={{ boxShadow: "lg" }}
     >
-      <Image src={image} alt={model} objectFit="cover" h="200px" />
+      <Image src={image} alt={model} objectFit="cover" h="200px" w={"100%"} />
       <Box p="4">
         <Heading as="h2" size="md" mb="2" isTruncated>
           {company} {model}
@@ -37,11 +67,16 @@ const CarBox = ({
           ${price}
         </Text>
         {isOwner ? (
-          <Link to={`/car/edit/${_id}`}>
-            <Button colorScheme="blue" w={"100%"}>
-              Edit Details
+          <>
+            <Link to={`/car/edit/${_id}`}>
+              <Button colorScheme="blue" w={"100%"}>
+                Edit Details
+              </Button>
+            </Link>
+            <Button colorScheme="red" w={"100%"} mt={4} onClick={handleDelete}>
+              Delete Car
             </Button>
-          </Link>
+          </>
         ) : (
           <Link to={`/car/${_id}`}>
             <Button colorScheme="blue" w={"100%"}>

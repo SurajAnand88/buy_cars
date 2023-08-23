@@ -17,11 +17,14 @@ const SingleCar = () => {
     getCarById();
   }, []);
   return (
-    <Container maxW="lg">
-      <Box p={4}>
+    <Container maxW={"container.xl"} mx={"auto"}>
+      <Box p={4} w={"100%"}>
         <Flex
           direction={{ base: "column", md: "row" }}
-          alignItems={{ base: "center", md: "flex-start" }}
+          align={{ base: "center", md: "start" }}
+          justify={{ base: "start", md: "center" }}
+          w={"100%"}
+          gap={4}
         >
           <Image
             src={carDetails.image}

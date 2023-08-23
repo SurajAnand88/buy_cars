@@ -7,10 +7,11 @@ import {
   Heading,
   Input,
   Select,
+  useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const carData = {
   Tesla: ["Model 3", "Model S", "Model X", "Model Y"],
@@ -23,25 +24,83 @@ const carData = {
 const PostOrEditCar = () => {
   const { id } = useParams();
   const [car, setCar] = useState({});
+  const toast = useToast();
+  const navigate = useNavigate();
 
   const [selectedCompany, setSelectedCompany] = useState("");
   const [selectedModel, setSelectedModel] = useState("");
   const [carDetails, setCardetails] = useState({});
   const [additionalInfo, setAdditionalInfo] = useState({});
 
-  console.log(id, car, selectedCompany);
   const handleCompanyChange = (event) => {
     setSelectedCompany(event.target.value);
+    setCardetails({
+      ...carDetails,
+      company: event.target.value,
+    });
     setSelectedModel("");
   };
 
   const handleModelChange = (event) => {
     setSelectedModel(event.target.value);
+    setCardetails({
+      ...carDetails,
+      model: event.target.value,
+    });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle form submission logic
+    try {
+      const token = localStorage.getItem("userToken") || null;
+      if (id && token) {
+        const { data } = await axios.post(
+          `http://localhost:4000/api/user/editcar/${id}`,
+          {
+            ...carDetails,
+            additionalInfo,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        toast({
+          title: `${data.company} ${data.model} Updated Successfully`,
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/inventory");
+      } else {
+        const { data } = await axios.post(
+          `http://localhost:4000/api/user/addcar`,
+          {
+            ...carDetails,
+            additionalInfo,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(data);
+        toast({
+          title: `${data.newCar.company} ${data.newCar.model} Added Successfully`,
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+          position: "top",
+        });
+        navigate("/inventory");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -61,7 +120,7 @@ const PostOrEditCar = () => {
     <Container maxW="lg">
       <Box p={4}>
         <Heading as="h2" size="lg" mb={4}>
-          Post Your Car
+          {id ? "Edit Your Car" : "Add Your Car"}
         </Heading>
         <form onSubmit={handleSubmit}>
           <FormControl mb={4}>
@@ -86,7 +145,7 @@ const PostOrEditCar = () => {
               <FormControl mb={4}>
                 <FormLabel>Model</FormLabel>
                 <Select
-                  value={id ? car.model : selectedModel}
+                  defaultValue={id ? car.model : selectedModel}
                   onChange={handleModelChange}
                   required
                 >
@@ -105,7 +164,7 @@ const PostOrEditCar = () => {
                 <FormLabel>Year</FormLabel>
                 <Input
                   name="year"
-                  value={id ? car?.year : ""}
+                  defaultValue={id ? car?.year : null}
                   type="number"
                   onChange={(e) =>
                     setCardetails({
@@ -120,7 +179,7 @@ const PostOrEditCar = () => {
                 <FormLabel>Price</FormLabel>
                 <Input
                   name="price"
-                  value={id ? car?.price : ""}
+                  defaultValue={id ? car?.price : null}
                   type="number"
                   onChange={(e) =>
                     setCardetails({
@@ -135,23 +194,8 @@ const PostOrEditCar = () => {
                 <FormLabel>Mileage</FormLabel>
                 <Input
                   name="mileage"
-                  value={id ? car?.mileage : ""}
+                  defaultValue={id ? car?.mileage : null}
                   type="number"
-                  onChange={(e) =>
-                    setCardetails({
-                      ...carDetails,
-                      [e.target.name]: e.target.value,
-                    })
-                  }
-                  required
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>Fuel Type</FormLabel>
-                <Input
-                  name="fuelType"
-                  value={id ? car?.fuelType : ""}
-                  type="text"
                   onChange={(e) =>
                     setCardetails({
                       ...carDetails,
@@ -166,7 +210,7 @@ const PostOrEditCar = () => {
                 <FormLabel>Top Speed</FormLabel>
                 <Input
                   name="topSpeed"
-                  value={id ? car?.topSpeed : ""}
+                  defaultValue={id ? car?.topSpeed : null}
                   type="text"
                   onChange={(e) =>
                     setCardetails({
@@ -182,7 +226,7 @@ const PostOrEditCar = () => {
                 <FormLabel>Power</FormLabel>
                 <Input
                   name="power"
-                  value={id ? car?.power : ""}
+                  defaultValue={id ? car?.power : null}
                   type="text"
                   onChange={(e) =>
                     setCardetails({
@@ -198,7 +242,7 @@ const PostOrEditCar = () => {
                 <FormLabel>Image Link</FormLabel>
                 <Input
                   name="image"
-                  value={id ? car?.image : ""}
+                  defaultValue={id ? car?.image : null}
                   type="text"
                   onChange={(e) =>
                     setCardetails({
@@ -211,29 +255,26 @@ const PostOrEditCar = () => {
               </FormControl>
 
               <FormControl mb={4}>
-                <FormLabel>Color</FormLabel>
-                <Select
+                <FormLabel>color</FormLabel>
+                <Input
                   name="color"
-                  value={id ? car?.color : ""}
+                  defaultValue={id ? car?.color : null}
+                  type="text"
                   onChange={(e) =>
                     setCardetails({
                       ...carDetails,
                       [e.target.name]: e.target.value,
                     })
                   }
-                >
-                  <option value="">Select Color</option>
-                  <option value="red">Red</option>
-                  <option value="blue">Blue</option>
-                  <option value="green">Green</option>
-                </Select>
+                  required
+                />
               </FormControl>
 
               <FormControl mb={4}>
                 <FormLabel>Fuel Type</FormLabel>
                 <Select
                   name="fuelType"
-                  value={id ? car?.fuelType : ""}
+                  defaultValue={id ? car?.fuelType : null}
                   onChange={(e) =>
                     setCardetails({
                       ...carDetails,
@@ -258,7 +299,7 @@ const PostOrEditCar = () => {
               <FormLabel>Buying Year</FormLabel>
               <Input
                 name="boughtYear"
-                value={id ? car?.additionalInfo?.boughtYear : ""}
+                defaultValue={id ? car?.additionalInfo?.boughtYear : null}
                 type="text"
                 onChange={(e) =>
                   setAdditionalInfo({
@@ -274,7 +315,7 @@ const PostOrEditCar = () => {
               <FormLabel>Buying Price</FormLabel>
               <Input
                 name="boughtPrice"
-                value={id ? car?.additionalInfo?.boughtPrice : ""}
+                defaultValue={id ? car?.additionalInfo?.boughtPrice : null}
                 type="text"
                 onChange={(e) =>
                   setAdditionalInfo({
@@ -290,7 +331,7 @@ const PostOrEditCar = () => {
               <FormLabel>Scratches</FormLabel>
               <Input
                 name="scratches"
-                value={id ? car?.additionalInfo?.scratches : ""}
+                defaultValue={id ? car?.additionalInfo?.scratches : null}
                 type="text"
                 onChange={(e) =>
                   setAdditionalInfo({
@@ -306,7 +347,7 @@ const PostOrEditCar = () => {
               <FormLabel>Number of Owners</FormLabel>
               <Input
                 name="numberOfOwners"
-                value={id ? car?.additionalInfo?.numberOfOwners : ""}
+                defaultValue={id ? car?.additionalInfo?.numberOfOwners : null}
                 type="text"
                 onChange={(e) =>
                   setAdditionalInfo({
@@ -322,7 +363,7 @@ const PostOrEditCar = () => {
               <FormLabel>Sell Price</FormLabel>
               <Input
                 name="sellPrice"
-                value={id ? car?.additionalInfo?.sellPrice : ""}
+                defaultValue={id ? car?.additionalInfo?.sellPrice : null}
                 type="text"
                 onChange={(e) =>
                   setAdditionalInfo({
@@ -335,7 +376,7 @@ const PostOrEditCar = () => {
             </FormControl>
           </Box>
           <Button colorScheme="blue" type="submit" mt={4}>
-            Post Car
+            {id ? "Update Car" : "Post Car"}
           </Button>
         </form>
       </Box>

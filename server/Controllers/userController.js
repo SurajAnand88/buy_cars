@@ -96,12 +96,13 @@ const getCar = async (req, res) => {
 //delete car from user inventory
 const deleteCar = async (req, res) => {
   try {
+    console.log(req.params.id);
     const car = await Car.findByIdAndDelete(req.params.id);
     const user = await User.findById(req.user._id);
     const index = user.inventory.indexOf(car._id);
     user.inventory.splice(index, 1);
     await user.save();
-    res.status(200).json({ message: "Car deleted successfully" }, car);
+    res.status(200).json({ message: "Car deleted successfully", car });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

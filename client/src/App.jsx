@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Home from "./Components/Home";
 import Inventory from "./Components/Inventory";
@@ -9,6 +10,7 @@ import SingleCar from "./Components/SingleCar";
 
 function App() {
   const token = localStorage.getItem("userToken") || null;
+  const user = useSelector((store) => store.user);
 
   //creating a private route based on token
   const PrivateRoute = ({ children }) => {
