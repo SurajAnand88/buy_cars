@@ -37,7 +37,7 @@ function App() {
           }
         />
         <Route
-          path="/inventory"
+          path="/inventory/:id"
           element={
             <PrivateRoute>
               <Inventory />

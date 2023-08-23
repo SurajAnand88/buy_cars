@@ -112,7 +112,7 @@ const deleteCar = async (req, res) => {
 const allUserCars = async (req, res) => {
   try {
     //gettting all car details present in users inventory by id
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.params.id);
     const cars = await Car.find({ _id: { $in: user.inventory } });
     res.status(200).json(cars);
   } catch (error) {
@@ -129,6 +129,16 @@ const allCars = async (req, res) => {
   }
 };
 
+// get user by id
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   addCar,
   editCar,
@@ -136,4 +146,5 @@ module.exports = {
   deleteCar,
   allUserCars,
   allCars,
+  getUserById,
 };

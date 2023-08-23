@@ -1,6 +1,6 @@
 import { Box, Button, Heading, Image, Text, useToast } from "@chakra-ui/react";
 import axios from "axios";
-import React from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -18,9 +18,11 @@ const CarBox = ({
   image,
   additionalInfo,
   isOwner,
+  owner,
 }) => {
   const toast = useToast();
   const dispatch = useDispatch();
+  const [adOwner, setAdOwner] = useState({});
   async function handleDelete() {
     try {
       const token = localStorage.getItem("userToken");
@@ -47,6 +49,16 @@ const CarBox = ({
     }
   }
 
+  useEffect(() => {
+    async function getUserById() {
+      const { data } = await axios.get(
+        `http://localhost:4000/api/user/getuserbyid/${owner}`
+      );
+      setAdOwner({ ...data });
+    }
+    getUserById();
+  });
+
   return (
     <Box
       borderWidth="1px"
@@ -64,7 +76,7 @@ const CarBox = ({
           {year} | {mileage} miles
         </Text>
         <Text fontWeight="bold" mb="2">
-          ${price}
+          Price : ${additionalInfo?.sellPrice}
         </Text>
         {isOwner ? (
           <>
@@ -84,6 +96,14 @@ const CarBox = ({
             </Button>
           </Link>
         )}
+        <Box
+          textAlign={"center"}
+          fontWeight={"semibold"}
+          fontSize={"lg"}
+          mt={2}
+        >
+          Posted by: {adOwner.name}
+        </Box>
       </Box>
     </Box>
   );

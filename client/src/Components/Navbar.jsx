@@ -58,7 +58,7 @@ const Navbar = () => {
           </Flex>
         ) : (
           <Flex gap={4} align={"center"}>
-            <Link to={"/inventory"}>
+            <Link to={`/inventory/${user?._id}`}>
               <Button>Inventory</Button>
             </Link>
             <Link to={"/addcar"}>

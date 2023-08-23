@@ -18,7 +18,7 @@ const Home = () => {
       <SimpleGrid
         columns={{ sm: 1, md: 2, lg: 3 }}
         spacing={4}
-        px={{ base: 2, sm: 10, md: 2 }}
+        px={{ base: 2, sm: 8, md: 2 }}
         maxW={"container.xl"}
         mx={"auto"}
       >

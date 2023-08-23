@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 
 const carData = {
@@ -26,7 +27,7 @@ const PostOrEditCar = () => {
   const [car, setCar] = useState({});
   const toast = useToast();
   const navigate = useNavigate();
-
+  const user = useSelector((store) => store.user);
   const [selectedCompany, setSelectedCompany] = useState("");
   const [selectedModel, setSelectedModel] = useState("");
   const [carDetails, setCardetails] = useState({});
@@ -74,7 +75,7 @@ const PostOrEditCar = () => {
           isClosable: true,
           position: "top",
         });
-        navigate("/inventory");
+        navigate(`/inventory/${user._id}`);
       } else {
         const { data } = await axios.post(
           `http://localhost:4000/api/user/addcar`,
@@ -96,7 +97,7 @@ const PostOrEditCar = () => {
           isClosable: true,
           position: "top",
         });
-        navigate("/inventory");
+        navigate(`/inventory/${user._id}`);
       }
     } catch (error) {
       console.log(error);
